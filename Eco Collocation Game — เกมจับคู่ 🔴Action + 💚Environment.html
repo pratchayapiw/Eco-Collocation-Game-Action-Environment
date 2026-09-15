@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>☀️ Eco Buddy — เกมคำศัพท์สิ่งแวดล้อม</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Sarabun','Segoe UI',system-ui,sans-serif;background:linear-gradient(180deg,#cdefff 0%,#e6fbe8 45%,#fffdf0 100%);color:#2b4a3f;min-height:100vh;padding:14px}
+.wrap{max-width:780px;margin:0 auto}
+header{text-align:center;margin-bottom:10px}
+h1{font-size:1.7rem;color:#1f8f5f;text-shadow:0 2px 0 #fff}
+.sub{font-size:.9rem;color:#5c7a6e;margin-top:3px}
+.bar{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.chip{background:#fff;border:3px solid #a8e6c3;border-radius:999px;padding:7px 15px;font-size:.92rem;font-weight:800;color:#1f8f5f;box-shadow:0 3px 0 #cdeedb}
+.tgl{cursor:pointer;border-color:#7cc9f0;color:#15607f;box-shadow:0 3px 0 #bfe6f7;font-family:inherit}
+.tgl.off{background:#f0f0f0;border-color:#ccc;color:#999;box-shadow:0 3px 0 #ddd}
+nav{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+nav button{flex:1 1 150px;background:#fff;color:#3b7a63;border:3px solid #b8e6d0;padding:12px 8px;border-radius:16px;cursor:pointer;font-size:.9rem;font-weight:800;box-shadow:0 4px 0 #d6efe3;transition:.15s;font-family:inherit}
+nav button.on{background:#ffd95c;color:#7a5200;border-color:#f5b800;box-shadow:0 4px 0 #e0a800;transform:translateY(-2px)}
+section{display:none;background:#fff;border:4px solid #b8e6d0;border-radius:24px;padding:18px;box-shadow:0 8px 0 #dcf2e6}
+section.on{display:block}
+h2{font-size:1.15rem;color:#1f8f5f;margin-bottom:5px}
+.how{font-size:.85rem;color:#6b8a7d;margin-bottom:14px;line-height:1.6;background:#f2fbf6;padding:10px 12px;border-radius:14px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.col h3{font-size:.9rem;margin-bottom:8px;text-align:center;color:#3b7a63}
+.pool{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+.card{padding:11px 13px;border-radius:14px;font-size:.92rem;font-weight:700;cursor:pointer;border:3px solid transparent;transition:.15s;user-select:none;text-align:center;line-height:1.35}
+.act{background:#ffe3ea;border-color:#ffb3c6;color:#b02a4a;box-shadow:0 3px 0 #ffc9d8}
+.env{background:#e4f8ec;border-color:#9fdfba;color:#1f6f4c;box-shadow:0 3px 0 #c9eeda}
+.card.sel{border-color:#f5b800;background:#fff3c4;transform:scale(1.08)}
+.card.hint{animation:glow .7s infinite alternate}
+.card.talk{animation:pop .35s ease}
+@keyframes glow{from{box-shadow:0 0 0 #ffd95c}to{box-shadow:0 0 16px 5px #ffd95c}}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.13)}100%{transform:scale(1)}}
+.spk{display:inline-block;background:#cdefff;border:3px solid #7cc9f0;color:#15607f;border-radius:999px;padding:6px 18px;font-size:1rem;font-weight:800;margin-top:10px;cursor:pointer;box-shadow:0 4px 0 #a5d9ef;font-family:inherit}
+.spk:active{transform:translateY(3px);box-shadow:none}
+.fb{margin-top:14px;padding:14px;border-radius:18px;font-size:1rem;min-height:60px;line-height:1.65;background:#f2fbf6;border:3px solid #cdeedb;font-weight:600}
+.ok{background:#e4f8ec;border-color:#6fd39b}
+.no{background:#fff0f3;border-color:#ffb3c6}
+.qbox{text-align:center;padding:14px 8px;background:#fffbe8;border:3px dashed #ffd95c;border-radius:20px}
+.qv{font-size:2.2rem;font-weight:900;color:#e0567c}
+.qth{font-size:1.02rem;color:#7a5200;margin-top:8px;font-weight:700}
+.opts{display:grid;gap:11px;margin-top:16px}
+.opt{background:#e4f8ec;border:3px solid #9fdfba;color:#1f6f4c;padding:16px;border-radius:18px;cursor:pointer;font-size:1.02rem;font-weight:800;box-shadow:0 4px 0 #c9eeda;font-family:inherit;transition:.12s;text-align:left;width:100%}
+.opt:active{transform:translateY(3px);box-shadow:none}
+.opt.good{background:#6fd39b;color:#fff;border-color:#3cb371}
+.opt.bad{background:#ffb3c6;color:#8a1538;border-color:#e0567c}
+.opt.talk{animation:pop .35s ease}
+.phrase{font-size:2rem;font-weight:900;text-align:center;padding:22px 8px 16px;color:#2b4a3f;background:#fffbe8;border:3px dashed #ffd95c;border-radius:20px}
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.tf button{padding:20px;border-radius:20px;border:3px solid;font-size:1.05rem;font-weight:900;cursor:pointer;font-family:inherit}
+.yes{background:#6fd39b;color:#fff;border-color:#3cb371;box-shadow:0 5px 0 #3cb371}
+.nope{background:#ff9bb3;color:#fff;border-color:#e0567c;box-shadow:0 5px 0 #e0567c}
+.big{display:block;width:100%;margin-top:12px;padding:15px;border-radius:20px;border:3px solid #f5b800;background:#ffd95c;color:#7a5200;font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 5px 0 #e0a800;font-family:inherit}
+.hintbtn{background:#cdefff;border-color:#7cc9f0;color:#15607f;box-shadow:0 5px 0 #7cc9f0}
+.prog{height:16px;background:#eaf6f0;border-radius:999px;overflow:hidden;margin-top:12px;border:2px solid #cdeedb}
+.prog div{height:100%;background:linear-gradient(90deg,#ffd95c,#6fd39b);width:0;transition:.4s}
+.list{margin-top:12px;display:flex;flex-wrap:wrap;gap:7px}
+.made{background:#e4f8ec;border:2px solid #6fd39b;border-radius:12px;padding:7px 11px;font-size:.85rem;font-weight:700;color:#1f6f4c;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:10px}
+th,td{border:2px solid #cdeedb;padding:9px;text-align:left;vertical-align:top}
+th{background:#e4f8ec;color:#1f8f5f}
+td:first-child{color:#b02a4a;font-weight:800;white-space:nowrap}
+.w{cursor:pointer;border-bottom:2px dotted #7cc9f0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>☀️ Eco Buddy</h1>
+  <div class="sub">แตะที่คำศัพท์ = ได้ยินเสียงอ่านทันที</div>
+</header>
+
+<div class="bar">
+  <div class="chip">⭐ <span id="score">0</span></div>
+  <div class="chip">🔥 <span id="combo">0</span></div>
+  <div class="chip" id="rank">🌱 ต้นกล้า</div>
+  <button class="chip tgl" id="btnSound" onclick="toggleSound()">🔊 เสียงเปิด</button>
+  <button class="chip tgl off" id="btnSlow" onclick="toggleSlow()">🐢 พูดช้า</button>
+</div>
+
+<nav>
+  <button class="on" onclick="tab(0,this)">1️⃣ จับคู่คำ</button>
+  <button onclick="tab(1,this)">2️⃣ เลือกคำถูก</button>
+  <button onclick="tab(2,this)">3️⃣ ถูกหรือผิด</button>
+  <button onclick="tab(3,this)">📘 ตารางคำ</button>
+</nav>
+
+<!-- 1 -->
+<section class="on" id="s0">
+  <h2>1️⃣ จับคู่คำ — สร้างวลีให้ครบ 5 อัน</h2>
+  <p class="how">👉 แตะคำกริยาสีชมพู 1 คำ (จะมีเสียงอ่านให้ฟังทันที) → แตะคำนามสีเขียวที่เข้าคู่กันได้<br>🆘 ไม่รู้คำตอบ กด <b>ขอคำใบ้</b> คำที่ถูกจะกะพริบให้เห็น</p>
+  <div class="cols">
+    <div class="col"><h3>🔴 คำกริยา (Action)</h3><div class="pool" id="p-act"></div></div>
+    <div class="col"><h3>💚 คำนาม (Environment)</h3><div class="pool" id="p-env"></div></div>
+  </div>
+  <div class="prog"><div id="pg1"></div></div>
+  <div class="fb" id="fb1">แตะคำกริยาสีชมพูก่อนนะ 👆</div>
+  <div class="list" id="made"></div>
+  <button class="big hintbtn" onclick="hint1()">💡 ขอคำใบ้</button>
+  <button class="big" onclick="startA1()">🔄 เล่นรอบใหม่</button>
+</section>
+
+<!-- 2 -->
+<section id="s1">
+  <h2>2️⃣ เลือกคำถูก — 8 ข้อ ไม่จับเวลา</h2>
+  <p class="how">ฟังเสียง + อ่านคำแปล แล้วเลือกคำนามที่ใช้ด้วยกันได้ 😊 ตอบผิดแก้ตัวได้ 1 ครั้ง</p>
+  <div class="qbox">
+    <div class="qv" id="q2">–</div>
+    <div class="qth" id="q2th">กดปุ่มเริ่มเล่นข้างล่าง</div>
+    <button class="spk" onclick="sayQ2()">ฟังคำกริยาอีกครั้ง</button>
+  </div>
+  <div class="opts" id="opts2"></div>
+  <button class="big hintbtn" onclick="sayAllOpts()">👂 ฟังทุกตัวเลือก</button>
+  <div class="prog"><div id="pg2"></div></div>
+  <div class="fb" id="fb2">พร้อมแล้วกด "เริ่มเล่น" ได้เลย 🌿</div>
+  <button class="big hintbtn" onclick="hint2()">💡 ขอคำใบ้ (ตัดตัวเลือกผิด)</button>
+  <button class="big" onclick="startA2()">▶️ เริ่มเล่น</button>
+</section>
+
+<!-- 3 -->
+<section id="s2">
+  <h2>3️⃣ ถูกหรือผิด — 8 ข้อ</h2>
+  <p class="how">ฟังเสียงวลีที่ขึ้นมา แล้วตัดสินว่า <b>✅ ใช้ได้</b> หรือ <b>❌ ใช้ไม่ได้</b> 🔥 ตอบถูกติดกันได้ดาวเพิ่ม</p>
+  <div class="phrase" id="q3">–<br><button class="spk" onclick="sayQ3()">ฟังอีกครั้ง</button></div>
+  <div class="tf">
+    <button class="yes" onclick="ans3(true)">✅ ใช้ได้</button>
+    <button class="nope" onclick="ans3(false)">❌ ใช้ไม่ได้</button>
+  </div>
+  <div class="prog"><div id="pg3"></div></div>
+  <div class="fb" id="fb3">พร้อมแล้วกด "เริ่มเล่น" ได้เลย 🌿</div>
+  <button class="big" onclick="startA3()">▶️ เริ่มเล่น</button>
+</section>
+
+<!-- 4 -->
+<section id="s3">
+  <h2>📘 ตารางคำช่วยจำ</h2>
+  <p class="how">แตะคำที่มีเส้นประใต้คำ เพื่อฟังเสียงอ่านได้เลย เปิดดูได้ตลอด ไม่ถือว่าโกงนะ 😄</p>
+  <table><thead><tr><th>🔴 คำกริยา</th><th>💚 ใช้กับคำนามเหล่านี้</th></tr></thead><tbody id="sheet"></tbody></table>
+</section>
+</div>
+
+<script>
+/* ---------- ระบบเสียง ---------- */
+let soundOn=true, slow=false, voiceEN=null;
+function loadVoice(){
+ const v=speechSynthesis.getVoices();
+ voiceEN=v.find(x=>/en-GB/i.test(x.lang))||v.find(x=>/en-US/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null;
+}
+if('speechSynthesis' in window){loadVoice();speechSynthesis.onvoiceschanged=loadVoice}
+function utter(t){const u=new SpeechSynthesisUtterance(t);u.lang='en-US';
+ if(voiceEN)u.voice=voiceEN;u.rate=slow?0.6:0.9;u.pitch=1.05;return u}
+function say(text){
+ if(!soundOn||!('speechSynthesis' in window))return;
+ speechSynthesis.cancel();speechSynthesis.speak(utter(text));
+}
+function sayMany(arr){
+ if(!soundOn||!('speechSynthesis' in window))return;
+ speechSynthesis.cancel();arr.forEach(t=>speechSynthesis.speak(utter(t)));
+}
+function toggleSound(){
+ soundOn=!soundOn; if(!soundOn)speechSynthesis.cancel();
+ const b=document.getElementById('btnSound');
+ b.textContent=soundOn?'🔊 เสียงเปิด':'🔇 เสียงปิด';
+ b.classList.toggle('off',!soundOn);
+ if(soundOn)say('Sound on');
+}
+function toggleSlow(){
+ slow=!slow;
+ const b=document.getElementById('btnSlow');
+ b.textContent=slow?'🐢 ช้าอยู่':'🐢 พูดช้า';
+ b.classList.toggle('off',!slow);
+ say('protect the ocean');
+}
+function pulse(el){el.classList.add('talk');setTimeout(()=>el.classList.remove('talk'),360)}
+
+/* ---------- ข้อมูล ---------- */
+const ENV={
+ "the ocean":["มหาสมุทร","🌊"],"the forest":["ป่า","🌳"],"wildlife":["สัตว์ป่า","🦌"],
+ "marine life":["สัตว์ทะเล","🐠"],"the environment":["สิ่งแวดล้อม","🌍"],"fresh water":["น้ำจืด","💧"],
+ "energy":["พลังงาน","⚡"],"natural resources":["ทรัพยากรธรรมชาติ","⛰️"],"plastic waste":["ขยะพลาสติก","🥤"],
+ "carbon emissions":["ก๊าซคาร์บอน","🏭"],"paper":["กระดาษ","📄"],"the river":["แม่น้ำ","🏞️"],
+ "public spaces":["พื้นที่สาธารณะ","🏙️"],"green spaces":["พื้นที่สีเขียว","🌿"],"trees":["ต้นไม้","🌲"],
+ "renewable energy":["พลังงานหมุนเวียน","☀️"],"pollution":["มลพิษ","💨"],"the beach":["ชายหาด","🏖️"],
+ "the air":["อากาศ","🌬️"],"coral reefs":["ปะการัง","🪸"],"rainwater":["น้ำฝน","🌧️"],
+ "food waste":["เศษอาหาร","🍎"],"the soil":["ดิน","🪴"],"sea turtles":["เต่าทะเล","🐢"]};
+
+const ACT={
+ protect:{th:"ปกป้อง",em:"🛡️",list:["the ocean","the forest","wildlife","marine life","the environment","coral reefs","sea turtles","the soil","the beach"]},
+ save:{th:"ประหยัด/ช่วยรักษา",em:"💾",list:["fresh water","energy","natural resources","trees","sea turtles","paper","rainwater"]},
+ reduce:{th:"ลด",em:"📉",list:["plastic waste","carbon emissions","food waste","pollution"]},
+ recycle:{th:"รีไซเคิล",em:"♻️",list:["plastic waste","paper","food waste"]},
+ clean:{th:"ทำความสะอาด",em:"🧽",list:["the river","the ocean","public spaces","green spaces","the beach"]},
+ plant:{th:"ปลูก",em:"🌱",list:["trees","green spaces","the forest"]},
+ use:{th:"ใช้",em:"🔌",list:["energy","fresh water","natural resources","renewable energy","rainwater","paper"]},
+ help:{th:"ช่วยเหลือ",em:"🤝",list:["the environment","wildlife","marine life","sea turtles","coral reefs"]},
+ reuse:{th:"ใช้ซ้ำ",em:"🔁",list:["plastic waste","paper","rainwater"]},
+ keep:{th:"รักษา...ให้สะอาด",em:"✨",list:["the river","public spaces","green spaces","the beach","the air"],adj:true},
+ prevent:{th:"ป้องกัน",em:"🚫",list:["carbon emissions","pollution","food waste"]},
+ preserve:{th:"อนุรักษ์",em:"🏛️",list:["the forest","wildlife","natural resources","the environment","coral reefs","the soil"]}
+};
+const ACTS=Object.keys(ACT),ENVS=Object.keys(ENV);
+const PRAISE=["เก่งมาก! 🎉","สุดยอด! 🌟","ถูกต้องเลย! 👏","เยี่ยม! 🥳","เจ๋งไปเลย! 🚀"];
+const CHEER=["ไม่เป็นไรนะ ลองใหม่ได้ 💪","เกือบแล้ว! สู้ ๆ 🌱","ผิดเป็นครู ลองอีกครั้ง 😊"];
+
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>a.slice().sort(()=>Math.random()-.5);
+const ok=(a,e)=>ACT[a].list.includes(e);
+const em=e=>ENV[e][1], th=e=>ENV[e][0];
+const phr=(a,e)=>ACT[a].adj?`keep ${e} clean`:`${a} ${e}`;
+const phrTH=(a,e)=>ACT[a].adj?`รักษา${th(e)}ให้สะอาด`:`${ACT[a].th}${th(e)}`;
+
+let score=0,combo=0;
+function addScore(n){score+=n;document.getElementById('score').textContent=score;
+ const r=score<60?"🌱 ต้นกล้า":score<150?"🌿 ต้นอ่อน":score<280?"🌳 ต้นไม้ใหญ่":"🏆 ฮีโร่โลก";
+ document.getElementById('rank').textContent=r}
+function setCombo(n){combo=n;document.getElementById('combo').textContent=n}
+function tab(i,b){speechSynthesis.cancel();
+ document.querySelectorAll('section').forEach((s,k)=>s.classList.toggle('on',k===i));
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+
+/* ---------- กิจกรรม 1 ---------- */
+let selA=null,made=[];
+function startA1(){
+ selA=null;made=[];setCombo(0);
+ document.getElementById('made').innerHTML='';
+ document.getElementById('pg1').style.width='0%';
+ fb1('แตะคำกริยาสีชมพูก่อนนะ 👆','');
+ const rAct=shuffle(ACTS).slice(0,4);
+ let pool=new Set();rAct.forEach(a=>shuffle(ACT[a].list).slice(0,2).forEach(e=>pool.add(e)));
+ shuffle(ENVS).forEach(e=>{if(pool.size<8)pool.add(e)});
+ const rEnv=shuffle([...pool]);
+ const pa=document.getElementById('p-act');pa.innerHTML='';
+ rAct.forEach(a=>{const d=document.createElement('div');d.className='card act';
+  d.innerHTML=`${ACT[a].em}<br>${a}<br><span style="font-size:.72rem;opacity:.75">${ACT[a].th}</span>`;
+  d.onclick=()=>{selA=a;say(a);pulse(d);
+   document.querySelectorAll('.card').forEach(x=>x.classList.remove('sel','hint'));d.classList.add('sel');
+   fb1(`เลือก <b>${a}</b> แปลว่า <b>${ACT[a].th}</b> ✅<br>ทีนี้แตะคำนามสีเขียวที่เข้าคู่กันได้เลย!`,'')};
+  pa.appendChild(d)});
+ const pe=document.getElementById('p-env');pe.innerHTML='';
+ rEnv.forEach(e=>{const d=document.createElement('div');d.className='card env';d.dataset.e=e;
+  d.innerHTML=`${em(e)}<br>${e}<br><span style="font-size:.72rem;opacity:.75">${th(e)}</span>`;
+  d.onclick=()=>{pulse(d);pick(e,d)};pe.appendChild(d)});
+}
+function fb1(h,c){const f=document.getElementById('fb1');f.className='fb '+c;f.innerHTML=h}
+function hint1(){
+ if(!selA){fb1('⚠️ แตะคำกริยาสีชมพูก่อนนะ แล้วค่อยกดคำใบ้ 😊','no');return}
+ let n=0;
+ document.querySelectorAll('.env').forEach(d=>{if(ok(selA,d.dataset.e)&&!made.includes(selA+'|'+d.dataset.e)){d.classList.add('hint');n++}});
+ say(selA);
+ fb1(`💡 คำที่กะพริบอยู่ ใช้กับ <b>${selA}</b> ได้เลย มี ${n} คำ!`,'');
+}
+function pick(e,el){
+ if(!selA){say(e);fb1('⚠️ แตะคำกริยาสีชมพูก่อนนะ 👆 (ตอนนี้ได้ยินแค่คำอ่านนะ)','no');return}
+ document.querySelectorAll('.env').forEach(d=>d.classList.remove('hint'));
+ const key=selA+'|'+e;
+ if(made.includes(key)){say(phr(selA,e));fb1('อันนี้ทำไปแล้ว ลองคู่ใหม่ ✨','');return}
+ if(ok(selA,e)){
+  made.push(key);setCombo(combo+1);addScore(10+combo*2);
+  say(phr(selA,e));
+  const m=document.createElement('div');m.className='made';
+  m.textContent=`${ACT[selA].em}${em(e)} ${phr(selA,e)}`;
+  const p=phr(selA,e);m.onclick=()=>say(p);
+  document.getElementById('made').appendChild(m);
+  document.getElementById('pg1').style.width=Math.min(made.length/5*100,100)+'%';
+  fb1(`${rnd(PRAISE)}<br><b style="font-size:1.15rem">${phr(selA,e)}</b> = ${phrTH(selA,e)}<br>ทำได้แล้ว ${made.length}/5 อัน`,'ok');
+  if(made.length>=5){fb1(`🏆 <b>ยอดเยี่ยมมาก!</b> ครบ 5 วลีแล้ว!<br>ได้ดาวรวม ${score} ⭐ กด "เล่นรอบใหม่" เพื่อเล่นอีก`,'ok');
+   setTimeout(()=>say('Excellent! You are an Earth hero!'),1300)}
+ }else{
+  setCombo(0);say(e);
+  fb1(`${rnd(CHEER)}<br><b>${selA} ${e}</b> ใช้ด้วยกันไม่ได้<br>💡 ลองกดปุ่ม "ขอคำใบ้" ดูสิ!`,'no');
+ }
+}
+
+/* ---------- กิจกรรม 2 ---------- */
+let cur2=null,n2=0,tries2=0,opts2=[];
+function sayQ2(){if(cur2)say(cur2.a)}
+function sayAllOpts(){
+ if(!cur2){document.getElementById('fb2').innerHTML='กด "เริ่มเล่น" ก่อนนะ 😊';return}
+ sayMany([cur2.a,...opts2]);
+ document.getElementById('fb2').className='fb';
+ document.getElementById('fb2').innerHTML='👂 ฟังคำกริยาและตัวเลือกทั้งหมดตามลำดับเลยนะ';
+}
+function startA2(){n2=0;setCombo(0);next2()}
+function next2(){
+ if(n2>=8){document.getElementById('fb2').className='fb ok';
+  document.getElementById('fb2').innerHTML=`🎊 <b>จบเกมแล้ว!</b> เก่งมาก ๆ<br>ได้ดาวรวม ${score} ⭐ กด "เริ่มเล่น" เพื่อเล่นใหม่`;
+  document.getElementById('opts2').innerHTML='';say('Well done!');cur2=null;return}
+ tries2=0;n2++;
+ const a=rnd(ACTS),good=rnd(ACT[a].list);
+ const bad=shuffle(ENVS.filter(e=>!ok(a,e))).slice(0,2);
+ cur2={a,good};opts2=shuffle([good,...bad]);
+ document.getElementById('q2').innerHTML=`${ACT[a].em} ${a} + ❓`;
+ document.getElementById('q2th').textContent=`ข้อ ${n2}/8 — ต้องการความหมายว่า "${ACT[a].th}..."`;
+ document.getElementById('pg2').style.width=(n2-1)/8*100+'%';
+ setTimeout(()=>say(a),300);
+ const box=document.getElementById('opts2');box.innerHTML='';
+ opts2.forEach(e=>{
+  const b=document.createElement('button');b.className='opt';b.dataset.e=e;
+  b.innerHTML=`${em(e)} ${e} <span style="font-weight:400;opacity:.7">(${th(e)})</span>`;
+  b.onclick=()=>{pulse(b);ans2(e,b)};box.appendChild(b)});
+ document.getElementById('fb2').className='fb';
+ document.getElementById('fb2').innerHTML='ฟังเสียงแล้วเลือกคำตอบได้เลย 😊';
+}
+function hint2(){
+ if(!cur2){document.getElementById('fb2').innerHTML='กด "เริ่มเล่น" ก่อนนะ 😊';return}
+ const bad=[...document.querySelectorAll('#opts2 .opt')].filter(b=>b.dataset.e!==cur2.good&&!b.disabled);
+ if(bad.length){bad[0].disabled=true;bad[0].style.opacity=.3;
+  document.getElementById('fb2').className='fb';
+  document.getElementById('fb2').innerHTML='💡 ตัดตัวเลือกที่ผิดออกให้ 1 ข้อแล้ว เลือกง่ายขึ้นแล้วนะ!'}
+}
+function ans2(e,btn){
+ if(!cur2)return;
+ const f=document.getElementById('fb2');
+ if(e===cur2.good){
+  btn.classList.add('good');setCombo(combo+1);addScore(tries2===0?12:6);
+  document.querySelectorAll('#opts2 .opt').forEach(b=>b.disabled=true);
+  say(phr(cur2.a,e));
+  f.className='fb ok';
+  f.innerHTML=`${rnd(PRAISE)}<br><b style="font-size:1.15rem">${phr(cur2.a,e)}</b> = ${phrTH(cur2.a,e)}`;
+  setTimeout(next2,2000);
+ }else if(tries2===0){
+  tries2=1;btn.classList.add('bad');btn.disabled=true;setCombo(0);say(e);
+  f.className='fb no';f.innerHTML=`${rnd(CHEER)}<br>ลองเลือกใหม่อีกครั้งนะ 🌱`;
+ }else{
+  btn.classList.add('bad');
+  document.querySelectorAll('#opts2 .opt').forEach(b=>{b.disabled=true;if(b.dataset.e===cur2.good)b.classList.add('good')});
+  say(phr(cur2.a,cur2.good));
+  f.className='fb no';
+  f.innerHTML=`คำตอบที่ถูกคือ <b>${phr(cur2.a,cur2.good)}</b><br>แปลว่า ${phrTH(cur2.a,cur2.good)} — ฟังเสียงแล้วจำไว้นะ 😊`;
+  setTimeout(next2,2600);
+ }
+}
+
+/* ---------- กิจกรรม 3 ---------- */
+let cur3=null,n3=0;
+function sayQ3(){if(cur3)say((ACT[cur3.a].adj&&cur3.valid)?phr(cur3.a,cur3.e):cur3.a+' '+cur3.e)}
+function startA3(){n3=0;setCombo(0);next3()}
+function next3(){
+ if(n3>=8){document.getElementById('fb3').className='fb ok';
+  document.getElementById('fb3').innerHTML=`🎊 <b>จบเกมแล้ว!</b> ได้ดาวรวม ${score} ⭐<br>กด "เริ่มเล่น" เพื่อเล่นใหม่`;
+  document.getElementById('q3').innerHTML='🌍 เยี่ยมมาก!';say('Great job!');cur3=null;return}
+ n3++;
+ const a=rnd(ACTS);let e,valid;
+ if(Math.random()<.5){e=rnd(ACT[a].list);valid=true}
+ else{e=rnd(ENVS.filter(x=>!ok(a,x)));valid=false}
+ cur3={a,e,valid};
+ const txt=(ACT[a].adj&&valid)?phr(a,e):a+' '+e;
+ document.getElementById('q3').innerHTML=`${ACT[a].em}${em(e)}<br>${txt}<br><button class="spk" onclick="sayQ3()">ฟังอีกครั้ง</button>`;
+ document.getElementById('pg3').style.width=(n3-1)/8*100+'%';
+ setTimeout(()=>say(txt),300);
+ document.getElementById('fb3').className='fb';
+ document.getElementById('fb3').innerHTML=`ข้อ ${n3}/8 — วลีนี้ใช้ได้ไหมนะ? 🤔`;
+}
+function ans3(u){
+ if(!cur3){document.getElementById('fb3').innerHTML='กด "เริ่มเล่น" ก่อนนะ 😊';return}
+ const f=document.getElementById('fb3');
+ if(u===cur3.valid){setCombo(combo+1);addScore(10+combo*2);f.className='fb ok';
+  if(cur3.valid)say(phr(cur3.a,cur3.e));
+  f.innerHTML=cur3.valid?`${rnd(PRAISE)} 🔥x${combo}<br><b>${phr(cur3.a,cur3.e)}</b> = ${phrTH(cur3.a,cur3.e)}`
+   :`${rnd(PRAISE)} 🔥x${combo}<br>ถูกแล้ว คู่นี้ใช้ด้วยกันไม่ได้`;
+ }else{setCombo(0);f.className='fb no';
+  if(cur3.valid)say(phr(cur3.a,cur3.e));
+  f.innerHTML=cur3.valid?`อุ๊ย! อันนี้ <b>ใช้ได้</b> นะ<br>${phr(cur3.a,cur3.e)} = ${phrTH(cur3.a,cur3.e)}`
+   :`อันนี้ <b>ใช้ไม่ได้</b> จ้า<br>💡 <b>${cur3.a}</b> ใช้กับ: ${ACT[cur3.a].list.slice(0,3).join(', ')}`;
+ }
+ setTimeout(next3,2200);
+}
+
+/* ---------- ตารางคำ ---------- */
+document.getElementById('sheet').innerHTML=ACTS.map(a=>
+ `<tr><td><span class="w" onclick="say('${a}')">${ACT[a].em} ${a}</span><br><span style="font-size:.75rem;color:#6b8a7d;font-weight:600">${ACT[a].th}</span></td>
+ <td>${ACT[a].list.map(e=>`<span class="w" onclick="say('${phr(a,e)}')">${em(e)} ${e}</span> <span style="color:#6b8a7d">(${th(e)})</span>`).join(' · ')}</td></tr>`).join('');
+
+startA1();
+</script>
+</body>
+</html>
